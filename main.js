@@ -10,7 +10,11 @@ window.addEventListener('load', () => {
   const game = new Game(canvas, ctx);
   let lastTime = 0;
   function animate(timeStamp) {
-    const deltaTime = timeStamp - lastTime;
+    let deltaTime = timeStamp - lastTime;
+    if (isNaN(deltaTime)) {
+      console.warn(`deltaTime is ${deltaTime}`);
+      deltaTime = 0;
+    }
     lastTime = timeStamp;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     game.render(deltaTime);
