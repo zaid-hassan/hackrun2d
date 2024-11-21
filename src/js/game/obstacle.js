@@ -8,7 +8,7 @@ export default class Obstacle {
         }
         this.height = this.width;
 
-        this.x = Math.floor(Math.random() * this.game.width - this.width);
+        this.x = Math.floor(Math.random() * (this.game.width - this.width));
         this.y = -this.height;
         
         this.available = true;
@@ -16,7 +16,7 @@ export default class Obstacle {
     }
     start() {
         this.available = false;
-        this.x = Math.floor(Math.random() * this.game.width - this.width) + this.width;
+        this.x = Math.floor(Math.random() * (this.game.width - this.width));
         this.y = -this.height;
     }
     reset() {

@@ -7,8 +7,13 @@ export default class Game {
         this.canvas = canvas;
         this.ctx = ctx;
 
+        this.gameOver = false;
+
         this.width = canvas.width;
         this.height = canvas.height;
+
+        this.score = 0;
+        this.highScore = (JSON.parse(localStorage.getItem('ship-highscore')) === null) ? 0 : JSON.parse(localStorage.getItem('ship-highscore'));
 
         this.keys = [];
 
@@ -95,9 +100,38 @@ export default class Game {
         }
     }
 
+    // Score
+    drawScoreText() {
+        const ctx = this.ctx;
+        ctx.fillStyle = 'white';
+        ctx.font = '60px "Tiny5"';
+        
+        const scoreText = `${this.score}    ${this.spaceship.life}    ${this.highScore}`;
+        const scoreTextWidth = ctx.measureText(scoreText).width;
+
+        const scoreX = (this.width / 2) - (scoreTextWidth / 2);
+        const scoreY = this.height * .1;
+
+        ctx.fillText(scoreText, scoreX, scoreY);
+    }
+
+    // Highscore calculation
+    calculateHighScore() {
+        if (this.score > this.highScore) {
+            this.highScore = this.score;
+            localStorage.setItem('ship-highscore', JSON.stringify(this.highScore))
+        }
+    }
+
+    gameOver() {
+        return this.gameOver;
+    }
+
 
     // Helper Functions
     start() {
+        this.gameOver = false;
+        console.log('start', this.gameOver);
         this.resize(window.innerWidth, window.innerHeight)
     }
     resize(width, height) {
@@ -123,17 +157,29 @@ export default class Game {
             if (!obstacle.available && this.collisionDetection(this.spaceship, obstacle)) {
                 console.log('Collision with obstacle!');
                 // Handle spaceship damage or game over here
+                if (this.spaceship.life > 0) {
+                    this.spaceship.life -= 1;
+                }
                 obstacle.reset();
+
             }
         });
+
+        console.log(this.spaceship.life)
+
+        if (this.spaceship.life <= 0) {
+            this.gameOver = true;
+            console.log('gameover', this.gameOver)
+        }
         
         this.energyPool.forEach(energyBall => {
             if (!energyBall.available && this.collisionDetection(this.spaceship, energyBall)) {
                 console.log('Energy ball collected!');
                 // Increase points or power-up
+                this.score += 1;
                 energyBall.reset();
             }
         });
-        
+        this.drawScoreText()
     }
 }

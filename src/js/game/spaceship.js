@@ -8,7 +8,7 @@ export default class Spaceship {
 
         // Initial position
         this.x = this.game.width / 2 - this.width / 2;
-        this.y = this.game.height - (this.height + 30);
+        this.y = this.game.height - (this.height + 100);
 
         // Movement variables
         this.velocity = 0;
@@ -30,6 +30,8 @@ export default class Spaceship {
         this.sx = 0;
         this.sy = 0;
         this.frameX = 0;
+
+        this.life = 2;
     }
 
     update(deltaTime) {
