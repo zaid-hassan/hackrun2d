@@ -1,6 +1,7 @@
 import EnergyBall from "./energyBall";
 import Obstacle from "./obstacle";
 import Spaceship from "./spaceship";
+import TimeDelay from "./timeDelay";
 
 export default class Game {
     constructor(canvas, ctx) {
@@ -27,15 +28,26 @@ export default class Game {
             energyBall: {
                 timer: 0,
                 interval: 800,
+            },
+            timeDelay: {
+                timer: 0,
+                interval: 15000,
             }
         }
 
+        this.timeDelayTimer = 0;
+        this.timeDelayDuration = 3000;
+        this.timeDelayActive = false;
+
         this.obstaclePool = [];
         this.energyPool = [];
+        this.timeDelayPool = [];
         this.numberOfObstacles = 100;
         this.numberOfEnergyBalls = 100;
+        this.numberOfTimeDelay = 1;
         this.createPool(this.obstaclePool, this.numberOfObstacles, Obstacle);
         this.createPool(this.energyPool, this.numberOfEnergyBalls, EnergyBall);
+        this.createPool(this.timeDelayPool, this.numberOfTimeDelay, TimeDelay);
 
 
         this.start()
@@ -105,7 +117,7 @@ export default class Game {
         const ctx = this.ctx;
         ctx.fillStyle = 'white';
         ctx.font = '60px "Tiny5"';
-        
+
         const scoreText = `${this.score}    ${this.spaceship.life}    ${this.highScore}`;
         const scoreTextWidth = ctx.measureText(scoreText).width;
 
@@ -141,6 +153,16 @@ export default class Game {
         this.height = height;
     }
     render(deltaTime) {
+
+        if (this.timeDelayActive) {
+            this.timeDelayTimer += deltaTime;
+
+            if (this.timeDelayTimer >= this.timeDelayDuration) {
+                this.timeDelayActive = false;
+                this.timeDelayTimer = 0;
+                console.log("Time delay ended");
+            }
+        }
         this.handleItem(deltaTime, this.obstaclePool, this.timer.obstacle);
         this.obstaclePool.forEach(obstacle => {
             obstacle.update(deltaTime);
@@ -150,6 +172,11 @@ export default class Game {
         this.energyPool.forEach(energyBall => {
             energyBall.update(deltaTime);
             energyBall.draw()
+        })
+        this.handleItem(deltaTime, this.timeDelayPool, this.timer.timeDelay);
+        this.timeDelayPool.forEach(timeDelay => {
+            timeDelay.update(deltaTime);
+            timeDelay.draw();
         })
         this.spaceship.update(deltaTime);
         this.spaceship.draw();
@@ -165,13 +192,12 @@ export default class Game {
             }
         });
 
-        console.log(this.spaceship.life)
 
         if (this.spaceship.life <= 0) {
             this.gameOver = true;
             console.log('gameover', this.gameOver)
         }
-        
+
         this.energyPool.forEach(energyBall => {
             if (!energyBall.available && this.collisionDetection(this.spaceship, energyBall)) {
                 console.log('Energy ball collected!');
@@ -180,6 +206,13 @@ export default class Game {
                 energyBall.reset();
             }
         });
+        this.timeDelayPool.forEach(timeDelay => {
+            if (!timeDelay.available && this.collisionDetection(this.spaceship, timeDelay)) {
+                console.log("Time delay activated!");
+                this.timeDelayActive = true; // Activate delay
+                timeDelay.reset();
+            }
+        })
         this.drawScoreText()
     }
 }

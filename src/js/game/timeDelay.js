@@ -1,10 +1,10 @@
 import Obstacle from "./obstacle";
 
-export default class EnergyBall extends Obstacle {
+export default class TimeDelay extends Obstacle {
     constructor(game) {
         super(game);
-        this.color = 'blue';
-        this.speedY = .2;
+        this.color = 'pink';
+        this.speedY = .6;
         // Image loading
         this.image = new Image();
         this.imageLoaded = false;
@@ -13,7 +13,7 @@ export default class EnergyBall extends Obstacle {
             this.sw = this.image.width; 
             this.sh = this.image.height;  
         };
-        this.image.src = './energyball.png'; 
+        this.image.src = './timedelay.png'; 
 
         // Sprite frame setup
         this.sx = 0;
@@ -21,17 +21,7 @@ export default class EnergyBall extends Obstacle {
     }
     start() {
         super.start();
-        this.color = 'blue';
-    }
-    update(deltaTime) {
-        if (!this.available) {
-            this.speedY = (this.game.timeDelayActive) ? 0.1 : 0.2;
-            this.y += this.speedY * deltaTime;
-
-            if (this.y >= this.game.height) {
-                this.reset()
-            }
-        }
+        this.color = 'pink';
     }
     draw() {
         if (!this.available) {

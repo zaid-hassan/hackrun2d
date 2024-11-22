@@ -31,20 +31,32 @@ export default class Spaceship {
         this.sy = 0;
         this.frameX = 0;
 
-        this.life = 2;
+        this.leftButton = document.querySelector('#left')
+        this.rightButton = document.querySelector('#right')
+
+        this.leftPressed = false;
+        this.rightPressed = false;
+
+        this.leftButton.addEventListener('touchstart', () => this.leftPressed = true)
+        this.leftButton.addEventListener('touchend', () => this.leftPressed = false)
+        this.rightButton.addEventListener('touchstart', () => this.rightPressed = true)
+        this.rightButton.addEventListener('touchend', () => this.rightPressed = false)
+
+        this.life = 200;
     }
 
     update(deltaTime) {
+        this.acceleration = (this.game.timeDelayActive) ? 0.025 : 0.05;
         // Handle movement based on keys
-        if (this.game.keys[0] === 'ArrowLeft') {
+        if (this.game.keys[0] === 'ArrowLeft' || this.leftPressed) {
             this.velocity -= this.acceleration * deltaTime;
             this.frameX = 256; // Left frame
         }
-        if (this.game.keys[0] === 'ArrowRight') {
+        if (this.game.keys[0] === 'ArrowRight' || this.rightPressed) {
             this.velocity += this.acceleration * deltaTime;
             this.frameX = 128; // Right frame
         }
-        if (this.game.keys.length === 0) {
+        if (this.game.keys.length === 0 && !this.leftPressed && !this.rightPressed) {
             // Decelerate if no keys are pressed
             if (this.velocity > 0) this.velocity = Math.max(0, this.velocity - this.deceleration * deltaTime);
             if (this.velocity < 0) this.velocity = Math.min(0, this.velocity + this.deceleration * deltaTime);
