@@ -42,7 +42,7 @@ export default class Spaceship {
         this.rightButton.addEventListener('touchstart', () => this.rightPressed = true)
         this.rightButton.addEventListener('touchend', () => this.rightPressed = false)
 
-        this.life = 200;
+        this.life = 10;
     }
 
     update(deltaTime) {
